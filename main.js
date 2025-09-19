@@ -50,10 +50,10 @@ async function compressPptxImages() {
 		await fs.mkdir(tempDir, { recursive: true });
 
 		console.log("📦 Unpacking PPTX as ZIP...");
-		const tempZip = path.join(tempDir, 'presentation.zip');
+		const tempZip = path.join(tempDir, "presentation.zip");
 		await fs.copyFile(inputPath, tempZip);
 
-		const extractDir = path.join(tempDir, 'extracted');
+		const extractDir = path.join(tempDir, "extracted");
 		await fs.mkdir(extractDir);
 
 		// Cross-platform extraction
@@ -62,14 +62,14 @@ async function compressPptxImages() {
 
 		} catch {
 			// For Windows, we use PowerShell
-			execSync(`Expand-Archive -Path "${tempZip}" -DestinationPath "${extractDir}" -Force`, {shell: 'powershell.exe'});
+			execSync(`Expand-Archive -Path "${tempZip}" -DestinationPath "${extractDir}" -Force`, {shell: "powershell.exe"});
 		}
 
 		console.log("🔍 Searching and compressing images...");
-		const mediaDir = path.join(extractDir, 'ppt', 'media');
+		const mediaDir = path.join(extractDir, "ppt", "media");
 		await processImagesInDirectory(mediaDir, maxDimension, quality);
 
-		const slidesMediaDir = path.join(extractDir, 'ppt', 'slides', '_media');
+		const slidesMediaDir = path.join(extractDir, "ppt", "slides", "_media");
 
 		if (await fileExists(slidesMediaDir)) {
 			await processImagesInDirectory(slidesMediaDir, maxDimension, quality);
@@ -85,8 +85,8 @@ async function compressPptxImages() {
 
 		} catch {
 			// For Windows, we use PowerShell
-			const files = await fs.readdir('.');
-			execSync(`Compress-Archive -LiteralPath ${files.map(f => `"${f}"`).join(',')} -DestinationPath "${tempZip}" -Force`, {shell: 'powershell.exe'});
+			const files = await fs.readdir(".");
+			execSync(`Compress-Archive -LiteralPath ${files.map(f => `"${f}"`).join(",")} -DestinationPath "${tempZip}" -Force`, {shell: "powershell.exe"});
 		}
 
 		process.chdir(cwd);
@@ -110,7 +110,7 @@ async function compressPptxImages() {
 `);
 
 	} catch (error) {
-		console.error('❌ An error occurred:', error.message);
+		console.error("❌ An error occurred:", error.message);
 		process.exit(1);
 	}
 }
@@ -129,7 +129,7 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 
 			const ext = path.extname(file).toLowerCase();
 
-			if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+			if (![".jpg", ".jpeg", ".png"].includes(ext)) {
 				continue;
 			}
 
@@ -146,12 +146,12 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 				const resizeOptions = {
 					width: metadata.width > metadata.height ? maxDimension : null,
 					height: metadata.height > metadata.width ? maxDimension : null,
-					fit: 'inside',
+					fit: "inside",
 					withoutEnlargement: true
 				};
 
-				if (ext === '.png') {
-					const compressionLevel = Math.floor((100 - quality) / 11.1); // // Convert 0-100 to 0-9
+				if (ext === ".png") {
+					const compressionLevel = Math.floor((100 - quality) / 11.1); // Convert 0-100 to 0-9
 
 					await image
 						.resize(resizeOptions)
@@ -162,7 +162,7 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 							force: false
 						})
 
-						.toFile(filePath + '.temp');
+						.toFile(`${filePath}.temp`);
 
 				} else {
 					await image
@@ -173,11 +173,11 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 							mozjpeg: true
 						})
 
-						.toFile(filePath + '.temp');
+						.toFile( `${filePath}.temp`);
 				}
 
 				await fs.unlink(filePath);
-				await fs.rename(filePath + '.temp', filePath);
+				await fs.rename(`${filePath}.temp`, filePath);
 
 				const newStats = await fs.stat(filePath);
 				const saved = (stats.size - newStats.size) / 1024 / 1024;
