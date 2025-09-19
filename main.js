@@ -11,6 +11,7 @@ import sharp from "sharp";
 const [inputPath, ...args] = process.argv.slice(2);
 
 const maxDimension = parseInt(args[0] ?? "1920");
+
 const quality = parseInt(args[1] ?? "80");
 
 if (!inputPath) {
@@ -20,7 +21,7 @@ Usage: node compress-pptx-images.js <path_to_file.pptx> [max_size] [quality]
   path_to_file.pptx : Path to your PowerPoint file
   max_size          : Maximum width/height in pixels (default: 1920)
   quality           : Quality for JPEG (1–100) and PNG (100–0, where 0 is max compression)
-  
+
 Example: pptx-image-compressor "My Presentation.pptx" 1920 80
 `);
 
