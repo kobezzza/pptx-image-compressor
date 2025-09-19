@@ -17,15 +17,11 @@ A tiny CLI utility to compress images embedded in PowerPoint (`.pptx/.pptm`) fil
 
 ## Installation
 
-This repository is meant to be run directly (not necessarily published to npm). Clone the repo and install dependencies:
-
 ```
-npm install
+npm install pptx-image-compressor
 ```
 
 ## Usage
-
-Run the CLI with Node, passing the path to your .pptx file and optional parameters:
 
 ```
 pptx-image-compressor <path_to_file.pptx> [max_size] [quality]
