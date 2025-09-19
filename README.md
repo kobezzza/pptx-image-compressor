@@ -51,6 +51,7 @@ On success, you’ll see a summary like:
 
 ```
 ✅ Done! File saved as: <original_name>_compressed.pptx
+
 📊 Compression results:
    Original size: <X> MB
    New size:      <Y> MB
