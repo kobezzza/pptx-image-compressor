@@ -18,7 +18,7 @@ A tiny CLI utility to compress images embedded in PowerPoint (`.pptx/.pptm`) fil
 ## Installation
 
 ```
-npm install pptx-image-compressor
+npm install pptx-image-compressor -g
 ```
 
 ## Usage
