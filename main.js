@@ -31,13 +31,13 @@ Example: pptx-image-compressor "My Presentation.pptx" 1920 80
 await compressPptxImages();
 
 async function compressPptxImages() {
+	const tempDir = path.join(process.cwd(), `temp_pptx_${Date.now()}`);
+
 	try {
 		if (!await fileExists(inputPath)) {
 			console.error(`Error: File "${inputPath}" not found!`);
 			process.exit(1);
 		}
-
-		const tempDir = path.join(process.cwd(), `temp_pptx_${Date.now()}`);
 
 		const inputExtname = path.extname(inputPath);
 
@@ -92,9 +92,6 @@ async function compressPptxImages() {
 		process.chdir(cwd);
 		await fs.copyFile(tempZip, outputFile);
 
-		console.log("🧹 Cleaning up temporary files...");
-		await fs.rm(tempDir, { recursive: true, force: true });
-
 		const originalStats = await fs.stat(inputPath);
 		const newStats = await fs.stat(outputFile);
 		const saved = (originalStats.size - newStats.size) / 1024 / 1024;
@@ -112,6 +109,12 @@ async function compressPptxImages() {
 	} catch (error) {
 		console.error("❌ An error occurred:", error.message);
 		process.exit(1);
+
+	} finally {
+		try {
+			console.log("🧹 Cleaning up temporary files...");
+			await fs.rm(tempDir, {recursive: true, force: true});
+		} catch {}
 	}
 }
 
@@ -150,6 +153,8 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 					withoutEnlargement: true
 				};
 
+				const tempPath = `${filePath}.temp`;
+
 				if (ext === ".png") {
 					const compressionLevel = Math.floor((100 - quality) / 11.1); // Convert 0-100 to 0-9
 
@@ -162,7 +167,7 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 							force: false
 						})
 
-						.toFile(`${filePath}.temp`);
+						.toFile(tempPath);
 
 				} else {
 					await image
@@ -173,15 +178,21 @@ async function processImagesInDirectory(dir, maxDimension, quality) {
 							mozjpeg: true
 						})
 
-						.toFile( `${filePath}.temp`);
+						.toFile( tempPath);
 				}
 
-				await fs.unlink(filePath);
-				await fs.rename(`${filePath}.temp`, filePath);
+				const newStats = await fs.stat(tempPath);
 
-				const newStats = await fs.stat(filePath);
-				const saved = (stats.size - newStats.size) / 1024 / 1024;
-				console.log(`✅ Compressed: ${(stats.size / 1024 / 1024).toFixed(2)} MB → ${(newStats.size / 1024 / 1024).toFixed(2)} MB (saved: ${saved.toFixed(2)} MB)`);
+				if (stats.size - newStats.size >= 0) {
+					await fs.unlink(filePath);
+					await fs.rename(tempPath, filePath);
+
+					const saved = (stats.size - newStats.size) / 1024 / 1024;
+					console.log(`✅ Compressed: ${(stats.size / 1024 / 1024).toFixed(2)} MB → ${(newStats.size / 1024 / 1024).toFixed(2)} MB (saved: ${saved.toFixed(2)} MB)`);
+
+				} else {
+					await fs.unlink(tempPath);
+				}
 
 			} catch (imageError) {
 				console.warn(`⚠️ Failed to process ${file}:`, imageError.message);
