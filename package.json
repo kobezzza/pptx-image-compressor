@@ -1,0 +1,26 @@
+{
+  "name": "pptx-image-compressor",
+  "description": "A tiny CLI utility to compress images embedded in PowerPoint files.",
+  "homepage": "https://github.com/kobezzza/pptx-image-compressor#readme",
+  "module": "main.js",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": {
+    "name": "kobezzza",
+    "email": "kobezzza@mail.ru",
+    "url": "https://github.com/kobezzza"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kobezzza/pptx-image-compressor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kobezzza/pptx-image-compressor/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "sharp": "^0.34.4"
+  }
+}
