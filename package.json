@@ -4,7 +4,7 @@
   "homepage": "https://github.com/kobezzza/pptx-image-compressor#readme",
   "type": "module",
   "bin": "main.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
